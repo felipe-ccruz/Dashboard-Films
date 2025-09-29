@@ -1,0 +1,39 @@
+# Calculando ROI: (Bilheteria Global - Orçamento) / Orçamento * 100
+df['ROI'] = ((df['Global_BoxOfficeUSD'] - df['BudgetUSD']) / df['BudgetUSD']) * 100
+
+# ROI médio por gênero
+roi_by_genre = df.groupby('Genre').agg({
+    'ROI': ['mean', 'median'],
+    'Title': 'count'
+}).round(2)
+
+roi_by_genre.columns = ['ROI_Médio_%', 'ROI_Mediana_%', 'Quantidade_Filmes']
+roi_by_genre = roi_by_genre.sort_values('ROI_Médio_%', ascending=False)
+
+# Visualização
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
+
+# Gráfico de barras para ROI médio
+colors = plt.cm.viridis(np.linspace(0.3, 0.9, len(roi_by_genre)))
+ax1.barh(roi_by_genre.index, roi_by_genre['ROI_Médio_%'], color=colors)
+ax1.set_xlabel('ROI Médio (%)')
+ax1.set_title('Retorno sobre Investimento Médio por Gênero')
+ax1.grid(True, alpha=0.3)
+
+# Box plot para distribuição de ROI
+df_roi_filtered = df[df['ROI'] < 1000]  # Filtrando outliers extremos para melhor visualização
+ax2.boxplot([df_roi_filtered[df_roi_filtered['Genre'] == g]['ROI'].values 
+             for g in roi_by_genre.index],
+            labels=roi_by_genre.index, vert=False)
+ax2.set_xlabel('ROI (%)')
+ax2.set_title('Distribuição de ROI por Gênero (outliers removidos)')
+ax2.grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+
+print("Top 5 Gêneros com Melhor ROI:")
+print(roi_by_genre.head())
+print("\n" + "="*50)
+print("Bottom 5 Gêneros com Pior ROI:")
+print(roi_by_genre.tail())
