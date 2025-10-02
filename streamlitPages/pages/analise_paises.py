@@ -110,25 +110,44 @@ with col1:
 
 
 with col2:
-    # 4. Gráfico de Scatter: Orçamento vs. Bilheteria
     st.subheader("Relação Orçamento vs. Bilheteria")
     fig4, ax4 = plt.subplots(figsize=(8, 6))
     
+    # --- CORREÇÃO APLICADA AQUI ---
+    # 1. Defina o tamanho mínimo e máximo que você quer para as bolhas
+    min_bubble_size = 30
+    max_bubble_size = 1000
+
+    # 2. Pega os valores mínimo e máximo da sua variável de tamanho
+    min_val = stats_filtered['Num_Filmes'].min()
+    max_val = stats_filtered['Num_Filmes'].max()
+
+    # 3. Normaliza os tamanhos para o intervalo desejado
+    # Evita divisão por zero se todos os valores forem iguais
+    if max_val == min_val:
+        scaled_sizes = [min_bubble_size] * len(stats_filtered)
+    else:
+        scaled_sizes = min_bubble_size + (stats_filtered['Num_Filmes'] - min_val) * \
+                       (max_bubble_size - min_bubble_size) / (max_val - min_val)
+    # --- FIM DA CORREÇÃO ---
+
     scatter = ax4.scatter(
         stats_filtered['Orçamento_Médio'] / 1e6,
         stats_filtered['Bilheteria_Média'] / 1e6,
-        s=stats_filtered['Num_Filmes'] * 10, # Tamanho da bolha pelo nº de filmes
+        s=scaled_sizes * 5, # Use os tamanhos normalizados aqui
         c=stats_filtered['ROI_Médio'],
         cmap='coolwarm',
-        alpha=0.8,
+        alpha=0.7, # Reduzir um pouco a opacidade ajuda na sobreposição
         edgecolors='black',
         linewidth=1
     )
+    
     ax4.set_xlabel('Orçamento Médio (Milhões USD)')
     ax4.set_ylabel('Bilheteria Média (Milhões USD)')
     ax4.grid(True, alpha=0.3)
     cbar = plt.colorbar(scatter, ax=ax4)
     cbar.set_label('ROI Médio (%)')
+    
     st.pyplot(fig4)
 
     # 5. Gráfico de Barras: Bilheteria Média
@@ -152,20 +171,37 @@ with col2:
     st.pyplot(fig6)
 
 
-# --- Tabelas de Dados ---
 st.header("📋 Dados Detalhados")
 
-# Tabela 1: Estatísticas Gerais
-st.subheader("Estatísticas Consolidadas por País")
-st.dataframe(
-    stats_filtered.style.format({
-        'Orçamento_Médio': '${:,.0f}',
-        'Bilheteria_Média': '${:,.0f}',
-        'ROI_Médio': '{:.2f}%',
-        'Rating_Médio': '{:.1f}'
-    }),
-    use_container_width=True
-)
+col1, col2 = st.columns([0.7, 0.3])
+with col2:
+    st.subheader("Ordenar por:")
+    
+    # Opções de ordenação baseadas nas colunas do DataFrame
+    sort_options = ['Bilheteria_Média', 'Orçamento_Médio', 'ROI_Médio', 'Rating_Médio']
+    
+    sort_by_option = st.radio(
+        "Selecione o critério de ordenação:",
+        options=sort_options,
+        label_visibility="collapsed" # Oculta o label principal do radio
+    )
+
+    sorted_df = stats_filtered.sort_values(by=sort_by_option, ascending=False)
+
+with col1:
+    # Tabela 1: Estatísticas Gerais
+    st.subheader("Estatísticas Consolidadas por País")
+    
+    st.dataframe(
+        sorted_df.style.format({
+            'Orçamento_Médio': '${:,.0f}',
+            'Bilheteria_Média': '${:,.0f}',
+            'ROI_Médio': '{:.2f}%',
+            'Rating_Médio': '{:.2f}'
+        }),
+        use_container_width=True
+    )
+
 
 # Tabela 2: Performance Internacional
 st.subheader("Performance no Mercado Internacional")
@@ -183,5 +219,3 @@ st.dataframe(
     international_by_country.style.format('{:.2f}%'),
     use_container_width=True
 )
-
-st.info("A tabela acima mostra o percentual médio da bilheteria de um filme que vem de fora do mercado dos EUA.")

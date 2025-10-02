@@ -117,7 +117,7 @@ decade_analysis = df_filtered.groupby('Decade').agg({
     'Global_BoxOfficeUSD': 'mean',
     'ROI': 'mean',
     'IMDbRating': 'mean'
-}).round(2)
+})
 
 # Renomeando colunas para melhor apresentação
 decade_analysis.columns = [
@@ -127,7 +127,51 @@ decade_analysis.columns = [
     "Nota Média IMDb"
 ]
 
-st.dataframe(decade_analysis, use_container_width=True)
+# --- Layout de Colunas e Ordenação para a Tabela de Década ---
+col_decade1, col_decade2 = st.columns([0.7, 0.3])
+
+with col_decade2:
+    st.subheader("Ordenar por:")
+    
+    # Opções de ordenação baseadas nas colunas da tabela de década
+    decade_sort_options = [
+        "Década (Mais Recente)", 
+        "Bilheteria Global Média (USD)", 
+        "Orçamento Médio (USD)", 
+        "ROI Médio (%)", 
+        "Nota Média IMDb"
+    ]
+    
+    decade_sort_by = st.radio(
+        "Selecione o critério para a tabela de décadas:",
+        options=decade_sort_options,
+        label_visibility="collapsed",
+        key='decade_sorter' # Chave única para este widget de rádio
+    )
+
+# Lógica de Ordenação para a tabela de década
+if decade_sort_by == "Década (Mais Recente)":
+    # Ordena pelo índice (década) em ordem decrescente
+    sorted_decade_df = decade_analysis.sort_index(ascending=False)
+else:
+    # Ordena pela coluna selecionada em ordem decrescente
+    sorted_decade_df = decade_analysis.sort_values(by=decade_sort_by, ascending=False)
+
+
+with col_decade1:
+    st.subheader("Desempenho por Década") # Adicionei um subheader para clareza
+    
+    # Exibe o DataFrame de década JÁ ORDENADO
+    st.dataframe(
+        sorted_decade_df.style.format({
+            "Orçamento Médio (USD)": "${:,.0f}",
+            "Bilheteria Global Média (USD)": "${:,.0f}",
+            "ROI Médio (%)": "{:.2f}%",
+            "Nota Média IMDb": "{:.2f}"
+        }), 
+        use_container_width=True
+    )
+
 
 st.info("""
 **Observações:**
