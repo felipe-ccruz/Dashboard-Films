@@ -94,6 +94,7 @@ with col1:
     colors_bar = plt.cm.YlOrRd(np.linspace(0.4, 0.9, len(data_bar)))
     ax2.barh(data_bar.index, data_bar, color=colors_bar)
     ax2.set_xlabel('Orçamento Médio (Milhões USD)')
+    ax2.set_xlim(left=9) # Força o eixo X a começar em 8
     ax2.grid(True, alpha=0.3, axis='x')
     st.pyplot(fig2)
 
@@ -105,6 +106,7 @@ with col1:
     ax3.barh(data_rating.index, data_rating, color=colors_rating)
     ax3.set_xlabel('Rating IMDb Médio')
     ax3.set_xlim(left=max(0, data_rating.min() - 0.5)) # Ajuste dinâmico do eixo
+    ax3.set_xlim(left=6.4, right=6.6) # Força o eixo X a começar em 6.4
     ax3.grid(True, alpha=0.3, axis='x')
     st.pyplot(fig3)
 
@@ -157,8 +159,11 @@ with col2:
     colors_box = plt.cm.GnBu(np.linspace(0.4, 0.9, len(data_box)))
     ax5.barh(data_box.index, data_box, color=colors_box)
     ax5.set_xlabel('Bilheteria Média (Milhões USD)')
+    ax5.set_xlim(left=24) # Força o eixo X a começar em 24
+
     ax5.grid(True, alpha=0.3, axis='x')
     st.pyplot(fig5)
+
 
     # 6. Gráfico de Barras: ROI Médio
     st.subheader("Retorno sobre Investimento (ROI) Médio")
@@ -167,6 +172,8 @@ with col2:
     colors_roi = plt.cm.RdYlGn(np.linspace(0.3, 0.9, len(data_roi)))
     ax6.barh(data_roi.index, data_roi, color=colors_roi)
     ax6.set_xlabel('ROI Médio (%)')
+    ax6.set_xlim(left=170, right=184) # Força o eixo X a começar em 170
+
     ax6.grid(True, alpha=0.3, axis='x')
     st.pyplot(fig6)
 
