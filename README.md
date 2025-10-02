@@ -75,7 +75,6 @@ Para explorar o dashboard em sua máquina local, siga os passos abaixo:
 
     ```bash
     git clone https://github.com/felipe-ccruz/Dashboard-Films.git
-    cd ./streamlitPages
     ```
 
 2.  **Crie um ambiente virtual (recomendado):**
@@ -86,7 +85,6 @@ Para explorar o dashboard em sua máquina local, siga os passos abaixo:
     ```
 
 3.  **Instale as dependências:**
-    (Certifique-se de ter um arquivo `requirements.txt` com as bibliotecas necessárias)
 
     ```bash
     pip install -r requirements.txt
@@ -95,7 +93,7 @@ Para explorar o dashboard em sua máquina local, siga os passos abaixo:
 4.  **Execute a aplicação Streamlit:**
 
     ```bash
-    streamlit run Home.py
+    streamlit run .\streamlitPages\Home.py
     ```
 
 -----

@@ -1,0 +1,19 @@
+# Arquivo de Requisitos (requirements.txt)
+# 
+# Use o comando `pip install -r requirements.txt` para instalar as dependências.
+# ---------------------------------------------------------------------------------
+
+# Core do Dashboard
+streamlit==1.50.0
+
+# Manipulação e Análise de Dados
+pandas==2.3.2
+numpy==2.3.3
+pandasql==0.7.3
+pyarrow==21.0.0
+
+# Visualização de Dados
+matplotlib==3.10.6
+seaborn==0.13.2
+plotly==6.3.0
+altair==5.5.0
