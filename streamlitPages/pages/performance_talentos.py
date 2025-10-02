@@ -107,6 +107,7 @@ with plot_col1:
     ax1.barh(data_to_plot.index, data_to_plot, color=colors)
     ax1.set_xlabel(f"{sort_metric.replace('_', ' ')}")
     ax1.grid(True, alpha=0.3, axis='x')
+    ax1.set_xlim(data_to_plot.min() * 0.9) # Espaço extra para melhor visualização
     
     st.pyplot(fig1)
 
